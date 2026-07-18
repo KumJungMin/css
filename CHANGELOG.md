@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.1](https://github.com/eslint/css/compare/css-v1.4.0...css-v1.4.1) (2026-07-18)
+
+
+### Bug Fixes
+
+* update baseline data ([43672ee](https://github.com/eslint/css/commit/43672ee184353178e75b60846435adf7dfc8c551))
+* update baseline data ([1ae3a41](https://github.com/eslint/css/commit/1ae3a4125a4e6d78fd32e93969100a8090a87157))
+
 ## [1.4.0](https://github.com/eslint/css/compare/css-v1.3.0...css-v1.4.0) (2026-07-01)
 
 
