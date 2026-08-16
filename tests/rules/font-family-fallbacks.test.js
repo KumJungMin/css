@@ -69,6 +69,11 @@ ruleTester.run("font-family-fallbacks", rule, {
 		":root { --my-font: Arial, SANS-SERIF; } a { font: 16px/1.5 Helvetica, var(--my-font); }",
 		"a { font: 16px/1.5 Arial, var(--x), SANS-SERIF; }",
 		"a { font: var(--font-weight) var(--font-size)/var(--line-height) MONOSPACE; }",
+		":root { --font: Arial, sans-serif; } a { font-family: VAR(--font); }",
+		":root { --font: Arial, sans-serif; } a { font-family: Arial, vAr(--font); }",
+		":root { --font: Arial, sans-serif; } a { font: 16px Var(--font); }",
+		":root { --font: Arial, sans-serif; } a { font: 16px MONOSPACE, vAr(--font); }",
+		"a { font-family: Arial, VAR(--unknown) }",
 	],
 	invalid: [
 		{
@@ -452,6 +457,18 @@ ruleTester.run("font-family-fallbacks", rule, {
 					column: 64,
 					endLine: 1,
 					endColumn: 83,
+				},
+			],
+		},
+		{
+			code: ":root { --font-value: 16px Arial; } a { font: VAR(--font-value); }",
+			errors: [
+				{
+					messageId: "useFallbackFonts",
+					line: 1,
+					column: 47,
+					endLine: 1,
+					endColumn: 64,
 				},
 			],
 		},

@@ -82,7 +82,7 @@ function isCSSWideKeywordIdentifier(node, cssWideKeywords) {
  * @returns {boolean} True if the node is a variable function, false otherwise.
  */
 function isVarFunction(node) {
-	return node.type === "Function" && node.name === "var";
+	return node.type === "Function" && node.name.toLowerCase() === "var";
 }
 
 /**
@@ -177,10 +177,7 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 						return;
 					}
 
-					if (
-						valueArr[0].type === "Function" &&
-						valueArr[0].name === "var"
-					) {
+					if (isVarFunction(valueArr[0])) {
 						const variableName =
 							valueArr[0].children[0].type === "Identifier" &&
 							valueArr[0].children[0].name;
@@ -234,10 +231,7 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 						const fontsList = [];
 						const lastNode = valueArr.at(-1);
 
-						if (
-							lastNode.type === "Function" &&
-							lastNode.name === "var"
-						) {
+						if (isVarFunction(lastNode)) {
 							const variableName =
 								lastNode.children[0].type === "Identifier" &&
 								lastNode.children[0].name;
@@ -258,10 +252,7 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 								fontsList.push(child.name);
 							}
 
-							if (
-								child.type === "Function" &&
-								child.name === "var"
-							) {
+							if (isVarFunction(child)) {
 								const variableName =
 									child.children[0].type === "Identifier" &&
 									child.children[0].name;
@@ -314,10 +305,7 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 					}
 
 					// If the value is a variable function, we need to check the variable value
-					if (
-						firstValue.type === "Function" &&
-						firstValue.name === "var"
-					) {
+					if (isVarFunction(firstValue)) {
 						// Check if the function is a variable
 						const variableName =
 							firstValue.children[0].type === "Identifier" &&
@@ -368,8 +356,10 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 							});
 
 							if (afterOperator.length !== 0) {
-								const usingVar = afterOperator.some(value =>
-									value.startsWith("var"),
+								const usingVar = valueArr.some(
+									value =>
+										value.loc.end.offset > operatorOffset &&
+										isVarFunction(value),
 								);
 
 								if (!usingVar) {
@@ -380,15 +370,9 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 										});
 									}
 								} else {
-									if (
-										afterOperator.at(-1).startsWith("var")
-									) {
-										const lastNode = valueArr.at(-1);
-										const isFunctionVar =
-											lastNode.type === "Function" &&
-											lastNode.name === "var";
+									const lastNode = valueArr.at(-1);
+									if (isVarFunction(lastNode)) {
 										const variableName =
-											isFunctionVar &&
 											lastNode.children[0].type ===
 												"Identifier" &&
 											lastNode.children[0].name;
@@ -425,18 +409,9 @@ export default /** @satisfies {FontFamilyFallbacksRuleDefinition} */ ({
 								}
 							}
 						} else {
-							if (
-								sourceCode
-									.getText(valueArr.at(-1))
-									.trim()
-									.startsWith("var")
-							) {
-								const lastNode = valueArr.at(-1);
-								const isFunctionVar =
-									lastNode.type === "Function" &&
-									lastNode.name === "var";
+							const lastNode = valueArr.at(-1);
+							if (isVarFunction(lastNode)) {
 								const variableName =
-									isFunctionVar &&
 									lastNode.children[0].type ===
 										"Identifier" &&
 									lastNode.children[0].name;
